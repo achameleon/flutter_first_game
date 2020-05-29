@@ -10,7 +10,7 @@ class OppenentPlank extends SpriteComponent {
   @override
   void resize(Size size) {
     this.x = (size.width - this.width) / 2;
-    this.y = size.height - opponentPlankDistation;
+    this.y = opponentPlankDistation;
   }
 
 }

@@ -25,6 +25,8 @@ dependencies:
     sdk: flutter
   flame: 0.21.0
   sensors: 0.4.2+2
+  audioplayers: 0.15.1
+  wifi: 0.1.5
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -48,8 +50,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/images/ball.png
-     - assets/images/plank.png
+     - assets/images/
+     - assets/sounds/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

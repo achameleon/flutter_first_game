@@ -11,7 +11,8 @@ class Plank extends SpriteComponent {
   @override
   void resize(Size size) {
     this.x = (size.width - this.width) / 2;
-    this.y = size.height - plankDistation;
+    this.y = scrY - plankDistation;
+    print (scrY);
   }
 
 }

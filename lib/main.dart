@@ -12,10 +12,11 @@ import 'package:wifi/wifi.dart';
 main() {
   WidgetsFlutterBinding.ensureInitialized();
   Util frameUtils = Util();
-  //frameUtils.setLandscape();
+  frameUtils.setLandscape();
   SystemChrome.setEnabledSystemUIOverlays([]);
   Wifi.ip.then( (String ipString) {
       ip = InternetAddress(ipString);
+      ipOther = InternetAddress(ipString);
       print('ip = $ip');
     }
   );

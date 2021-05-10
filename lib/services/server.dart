@@ -18,11 +18,14 @@ class Server {
   void initData(int port) {
     Datagram datagram;
     String dataReceived = '';
+    print ("s = $socketData");
     RawDatagramSocket.bind(InternetAddress.anyIPv4, port)
       .then((RawDatagramSocket socket) {
         socketData = socket;
+        print ("s = $socketData");
         subscriptionData = socketData.listen((RawSocketEvent event) {
           datagram = socketData.receive();
+          print ("d = $datagram");
           if (datagram == null) return;
           dataReceived = String.fromCharCodes(datagram.data);
           processData(dataReceived);

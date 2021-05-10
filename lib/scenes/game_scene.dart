@@ -24,6 +24,9 @@ class GameScene extends BaseGame {
   double _plankOpponentX;
   String _dataOut;
   String _oldDataOut;
+  double _oldBallX1;
+  double _oldBallY1;
+  bool _triggered;
 
   GameScene() {
     _ball = Ball();
@@ -46,6 +49,10 @@ class GameScene extends BaseGame {
     _plankOpponentX = 0;
     _oldDataOut = "";
 
+    _oldBallX1 = 0;
+    _oldBallY1 = 0;
+    _triggered = false;
+
     this._init();
   }
 
@@ -67,15 +74,6 @@ class GameScene extends BaseGame {
     canvas.drawRect(gbRect, gbPaint);
   }
 
-  void _move() {
-    _ball.x++;
-    _ball.y++;
-    if (_ball.x > 300) {
-      _ball.x = 0;
-      _ball.y = 0;
-    }
-  }
-
   void _movePad(double x, double y) {
     _plank.x = x;
     _plank.y = y;
@@ -92,8 +90,8 @@ class GameScene extends BaseGame {
       _playAsset(bounceSound, volumeBounce);
     } else if (_ball.x + ballDiameter / 2 >= _oppenentPlank.x &&
         _ball.x + ballDiameter / 2 <= _oppenentPlank.x + plankWidth &&
-        _ball.y <= borT + opponentPlankDistation + _oppenentPlank.height &&
-        _ball.y >= borT + opponentPlankDistation + _oppenentPlank.height - opponentPlankHeight &&
+        _ball.y <= borT + opponentPlankDistation + opponentPlankHeight &&
+        _ball.y >= borT + opponentPlankDistation &&
         _dy < 0) {
       _dy = ballSpeed;
       _playAsset(bounceSound, volumeBounce);
@@ -146,12 +144,45 @@ class GameScene extends BaseGame {
 
   void _setPositionData() {
     if (scrXOther == 0 || scrYOther == 0) return;
-    _oppenentPlank.x = scrX - (_oppenentPlank.width + _plankOpponentX) * scrX / scrXOther;
-    _oppenentPlank.y = opponentPlankDistation;
+    _oppenentPlank.x = scrXOther - (_oppenentPlank.width + _plankOpponentX) * scrX / scrXOther + (isClient ? -plankConst : plankConst);
+    _oppenentPlank.y = (plankDistation - _plank.height) * scrY / scrYOther;
     if (isClient) {
-      _ball.x = scrX - (ballDiameter + _ballX) * scrX / scrXOther;
-      _ball.y = scrY - (ballDiameter + _ballY) * scrY / scrYOther;
+      _ball.x = scrXOther - (ballDiameter + _ballX) * scrX / scrXOther + ballXConst;
+      _ball.y = scrYOther - (ballDiameter + _ballY) * scrY / scrYOther + ballYConst;
+      _playSoundClient();
     }
+  }
+
+  void _playSoundClient() {
+    if (!_triggered && _oldBallX1 < bRange && _oldBallX1 > _ballX) {
+      _triggered = true;
+    } else if (_triggered && _ballX < bRange && _oldBallX1 < _ballX) {
+      _playAsset(bounceSound, volumeBounce);
+      _triggered = false;
+    } else if (!_triggered && _oldBallX1 > scrX - bRange && _oldBallX1 < _ballX){
+      _triggered = true;
+    } else if (_triggered && _ballX > scrX - bRange && _oldBallX1 > _ballX) {
+      _playAsset(bounceSound, volumeBounce);
+      _triggered = false;
+    } else if (!_triggered && _oldBallY1 < plankDistation + bRange && _oldBallY1 > _ballY) {
+      _triggered = true;
+    } else if (_triggered && _ballY < plankDistation + bRange && _ballY > _oldBallY1) {
+      _playAsset(bounceSound, volumeBounce);
+      _triggered = false;
+    } else if (!_triggered && _oldBallY1 > scrY - plankDistation - bRange - ballDiameter && _oldBallY1 < _ballY) {
+      _triggered = true;
+    } else if (_triggered && _ballY > scrY - plankDistation - bRange - ballDiameter && _oldBallY1 < _ballY) {
+      _playAsset(bounceSound, volumeBounce);
+      _triggered = false;
+    } else if (_oldBallY1 > scrY - bRange && _ballY < bRange) {
+      _playAsset(loseSound, volumeLose);
+      _triggered = false;
+    } else if (_oldBallY1 < bRange && _ballY > scrY - bRange) {
+      _playAsset(winSound, volumeWin);
+      _triggered = false;
+    }
+    _oldBallX1 = _ballX;
+    _oldBallY1 = _ballY;
   }
 
   @override
